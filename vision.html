@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pynch — Vision 2026</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Righteous&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/style.min.css" />
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ══════════════════════════════════
+       TOKENS
+    ══════════════════════════════════ */
+    :root {
+      --cream:     #FAF8F5;
+      --grey-bg:   #dadee1;
+      --dark-bg:   #0a0a14;
+      --darker-bg: #161616;
+      --coral:     #FF4D5A;
+      --coral-d:   #E83344;
+      --teal:      #00D4AA;
+      --purple:    #7B50C8;
+      --blue:      #3E89FF;
+      --amber:     #FFB800;
+      --ink:       #131322;
+      --mid:       #555570;
+      --border:    #E2DFDA;
+
+      --text-100:  rgba(255,255,255,1.0);
+      --text-70:   rgba(255,255,255,0.7);
+      --text-50:   rgba(255,255,255,0.5);
+      --text-30:   rgba(255,255,255,0.3);
+
+      --font:      'Plus Jakarta Sans', sans-serif;
+      --mono:      'Geist Mono', monospace;
+      --logo-font: 'Righteous', sans-serif;
+
+      --glass-bg:     rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.14);
+      --glass-shadow: 0 24px 60px rgba(0,0,0,0.24), 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    /* ══════════════════════════════════
+       RESET + BASE
+    ══════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--dark-bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ══════════════════════════════════
+       SECTION LABELS / HEADINGS
+    ══════════════════════════════════ */
+    .label {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      opacity: 0.6;
+    }
+    .label.coral  { color: var(--coral); opacity: 1; }
+    .label.teal   { color: var(--teal); opacity: 1; }
+    .label.purple { color: var(--purple); opacity: 1; }
+    .label.amber  { color: var(--amber); opacity: 1; }
+
+    .heading-xl {
+      font-size: clamp(2.5rem, 5.5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+    .heading-lg {
+      font-size: clamp(1.8rem, 3.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    .heading-md {
+      font-size: clamp(1.3rem, 2.5vw, 1.875rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+    }
+    .body-lg {
+      font-size: 1.0625rem;
+      line-height: 1.72;
+      font-weight: 400;
+    }
+    .body-md {
+      font-size: 0.9375rem;
+      line-height: 1.65;
+    }
+
+    /* ══════════════════════════════════
+       1. HERO
+    ══════════════════════════════════ */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      background: var(--dark-bg);
+    }
+    #gradientCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,10,20,0.18) 0%,
+        rgba(10,10,20,0.04) 40%,
+        rgba(10,10,20,0.32) 100%
+      );
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 780px;
+      padding: 0 2rem;
+    }
+    .hero-logo {
+      margin: 0 auto 2.5rem;
+      height: 36px;
+      width: auto;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    .hero-headline {
+      font-size: clamp(3rem, 7vw, 5.25rem);
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 1.0;
+      color: var(--text-100);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .hero-headline em {
+      font-style: normal;
+      color: var(--coral);
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.1875rem);
+      line-height: 1.65;
+      color: var(--text-70);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--coral);
+      color: #fff;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      padding: 0.875rem 2rem;
+      border-radius: 100px;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 12px 36px rgba(255,77,90,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 48px rgba(255,77,90,0.45);
+    }
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-30);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(to bottom, transparent, var(--text-30));
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+
+    /* ══════════════════════════════════
+       2. THE PROBLEM (cream)
+    ══════════════════════════════════ */
+    #problem {
+      background: var(--cream);
+      padding: 120px 0 100px;
+      overflow: hidden;
+    }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .problem-text .label { color: var(--coral); }
+    .problem-text .heading-lg { color: var(--ink); margin-bottom: 1.5rem; }
+    .problem-text .body-lg { color: var(--mid); margin-bottom: 1.5rem; }
+    .problem-quote {
+      background: var(--ink);
+      color: var(--text-100);
+      border-radius: 16px;
+      padding: 1.5rem 1.75rem;
+      margin-top: 2rem;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+    .problem-quote .stat-line { color: var(--teal); }
+
+    /* Funnel */
+    .funnel-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      position: relative;
+    }
+    .funnel-step {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      position: relative;
+    }
+    .funnel-bar {
+      height: 60px;
+      background: var(--coral);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: none;
+    }
+    .funnel-bar-label {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      white-space: nowrap;
+      z-index: 1;
+    }
+    .funnel-bar-num {
+      position: absolute;
+      right: -3.5rem;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--coral);
+    }
+    .funnel-connector {
+      width: 2px;
+      height: 20px;
+      background: linear-gradient(to bottom, var(--coral), var(--teal));
+    }
+    .funnel-step:nth-child(2) .funnel-bar { background: color-mix(in srgb, var(--coral) 70%, var(--purple)); }
+    .funnel-step:nth-child(3) .funnel-bar { background: var(--teal); }
+    .funnel-step:nth-child(3) .funnel-bar-num { color: var(--teal); }
+
+    /* ══════════════════════════════════
+       3. THE MARKET (dark)
+    ══════════════════════════════════ */
+    #market {
+      background: var(--darker-bg);
+      padding: 120px 0;
+      overflow: hidden;
+    }
+    .market-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+    .market-header .label { color: var(--teal); }
+    .market-header .heading-lg { color: var(--text-100); margin-bottom: 1rem; }
+    .market-header .body-lg { color: var(--text-70); max-width: 560px; margin: 0 auto; }
+
+    .market-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    .stat-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: clamp(2.5rem, 4vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text-100);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .stat-number span.accent { color: var(--teal); }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-50);
+      font-weight: 500;
+    }
+
+    .competitor-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+    .comp-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.5rem 1.25rem;
+    }
+    .comp-card.pynch-card {
+      border-color: var(--teal);
+      background: rgba(0,212,170,0.07);
+      position: relative;
+    }
+    .comp-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-100);
+      margin-bottom: 0.5rem;
+    }
+    .comp-price {
+      font-family: var(--mono);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--coral);
+      margin-bottom: 0.5rem;
+    }
+    .comp-card.pynch-card .comp-price { color: var(--teal); }
+    .comp-desc {
+      font-size: 0.78rem;
+      color: var(--text-50);
+      line-height: 1.55;
+    }
+    .pynch-badge {
+      position: absolute;
+      top: -12px;
+      right: 16px;
+      background: var(--teal);
+      color: var(--ink);
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+
+    /* ══════════════════════════════════
+       4. WHAT PYNCH IS — sticky scroll
+    ══════════════════════════════════ */
+    #phases {
+      background: var(--cream);
+      position: relative;
+    }
+    .phases-sticky-outer {
+      position: relative;
+    }
+    .phases-pin-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 4rem;
+    }
+    .phases-left {
+      width: 340px;
+      flex-shrink: 0;
+    }
+    .phases-left .label { color: var(--purple); }
+    .phases-left .heading-lg { color: var(--ink); margin-bottom: 1rem; }
+    .phases-left .body-lg { color: var(--mid); }
+    .phases-progress {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .phase-indicator {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      cursor: pointer;
+      opacity: 0.3;
+      transition: opacity 0.4s;
+    }
+    .phase-indicator.active { opacity: 1; }
+    .phase-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--mid);
+      flex-shrink: 0;
+      transition: background 0.4s, transform 0.3s;
+    }
+    .phase-indicator.active .phase-dot {
+      background: var(--purple);
+      transform: scale(1.4);
+    }
+    .phase-indicator-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .phases-right {
+      flex: 1;
+      position: relative;
+      min-height: 500px;
+    }
+    .phase-panel {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s, transform 0.5s;
+      pointer-events: none;
+    }
+    .phase-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .phase-card {
+      background: var(--ink);
+      border-radius: 24px;
+      padding: 2.5rem;
+      height: 100%;
+      min-height: 440px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .phase-card::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      opacity: 0.06;
+      background: var(--phase-color, var(--purple));
+    }
+    .phase-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--phase-color, var(--purple));
+      background: rgba(123,80,200,0.12);
+      border: 1px solid rgba(123,80,200,0.25);
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+    .phase-card .heading-md { color: var(--text-100); margin-bottom: 1rem; }
+    .phase-card .body-md { color: var(--text-70); }
+    .phase-features {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .phase-feat {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      color: var(--text-70);
+    }
+    .phase-feat::before {
+      content: '→';
+      color: var(--phase-color, var(--purple));
+      flex-shrink: 0;
+      margin-top: 0.05em;
+      font-weight: 700;
+    }
+    .phase-number {
+      font-family: var(--mono);
+      font-size: 5rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.04);
+      position: absolute;
+      bottom: 1.5rem;
+      right: 2rem;
+      line-height: 1;
+    }
+
+    /* ══════════════════════════════════
+       5. WHAT'S LIVE (dark)
+    ══════════════════════════════════ */
+    #roadmap {
+      background: var(--dark-bg);
+      padding: 120px 0;
+    }
+    .roadmap-header {
+      margin-bottom: 4rem;
+    }
+    .roadmap-header .label { color: var(--amber); }
+    .roadmap-header .heading-lg { color: var(--text-100); margin-bottom: 0.75rem; }
+    .roadmap-cols {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .roadmap-col {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+    }
+    .roadmap-col-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+    }
+    .roadmap-col-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    .col-built .roadmap-col-icon { background: rgba(0,212,170,0.15); color: var(--teal); }
+    .col-building .roadmap-col-icon { background: rgba(255,184,0,0.15); color: var(--amber); }
+    .col-after .roadmap-col-icon { background: rgba(62,137,255,0.12); color: var(--blue); }
+    .roadmap-col-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-100);
+    }
+    .roadmap-col-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-50);
+    }
+    .roadmap-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+    }
+    .roadmap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.875rem;
+      color: var(--text-70);
+      line-height: 1.45;
+    }
+    .roadmap-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-top: 0.35em;
+      flex-shrink: 0;
+    }
+    .col-built .roadmap-dot { background: var(--teal); }
+    .col-building .roadmap-dot { background: var(--amber); }
+    .col-after .roadmap-dot { background: var(--blue); }
+
+    /* ══════════════════════════════════
+       6. SEARCH SIGNAL (dark terminal)
+    ══════════════════════════════════ */
+    #signal {
+      background: var(--ink);
+      padding: 120px 0;
+      overflow: hidden;
+    }
+    .signal-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .signal-inner .label { color: var(--blue); }
+    .signal-inner .heading-lg { color: var(--text-100); margin-bottom: 1rem; }
+    .signal-inner .body-lg { color: var(--text-70); margin-bottom: 3.5rem; }
+
+    .terminal-wrap {
+      background: #0d0d14;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+      text-align: left;
+    }
+    .terminal-bar {
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 0.875rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .term-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .term-dot:nth-child(1) { background: #FF5F57; }
+    .term-dot:nth-child(2) { background: #FEBC2E; }
+    .term-dot:nth-child(3) { background: #28C840; }
+    .terminal-title {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-30);
+      margin-left: auto;
+    }
+    .terminal-body {
+      padding: 1.75rem;
+      font-family: var(--mono);
+      font-size: 0.875rem;
+      line-height: 2.0;
+    }
+    .term-prompt { color: var(--teal); }
+    .term-query { color: var(--text-70); }
+    .term-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      padding: 1px 8px;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+    .term-tag.high { background: rgba(255,77,90,0.2); color: var(--coral); }
+    .term-tag.med  { background: rgba(255,184,0,0.15); color: var(--amber); }
+    .term-tag.low  { background: rgba(62,137,255,0.15); color: var(--blue); }
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--teal);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 0.9s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ══════════════════════════════════
+       7. WHY NOW (cream)
+    ══════════════════════════════════ */
+    #whynow {
+      background: var(--cream);
+      padding: 120px 0;
+    }
+    .whynow-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .whynow-text .label { color: var(--purple); }
+    .whynow-text .heading-lg { color: var(--ink); margin-bottom: 1.5rem; }
+    .whynow-text .body-lg { color: var(--mid); margin-bottom: 1.5rem; }
+    .whynow-visual {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .whynow-card {
+      background: var(--ink);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .whynow-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .whynow-card:nth-child(1) .whynow-icon { background: rgba(255,77,90,0.15); }
+    .whynow-card:nth-child(2) .whynow-icon { background: rgba(0,212,170,0.15); }
+    .whynow-card:nth-child(3) .whynow-icon { background: rgba(123,80,200,0.15); }
+    .whynow-card-title { font-weight: 700; font-size: 0.9rem; color: var(--text-100); margin-bottom: 0.35rem; }
+    .whynow-card-body { font-size: 0.82rem; color: var(--text-70); line-height: 1.55; }
+
+    /* ══════════════════════════════════
+       8. SPARTAN ADVANTAGE (dark)
+    ══════════════════════════════════ */
+    #spartan {
+      background: var(--darker-bg);
+      padding: 120px 0;
+      overflow: hidden;
+    }
+    .spartan-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .spartan-text .label { color: var(--coral); }
+    .spartan-text .heading-lg { color: var(--text-100); margin-bottom: 1.5rem; }
+    .spartan-text .body-lg { color: var(--text-70); }
+
+    .spartan-loop {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 2rem;
+      position: relative;
+    }
+    .loop-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 2rem;
+      opacity: 0.8;
+    }
+    .loop-nodes {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+    .loop-node {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      padding: 1rem 0;
+    }
+    .loop-node-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .loop-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,77,90,0.12);
+      border: 2px solid rgba(255,77,90,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: var(--coral);
+      flex-shrink: 0;
+    }
+    .loop-line {
+      width: 2px;
+      flex: 1;
+      min-height: 16px;
+      background: linear-gradient(to bottom, rgba(255,77,90,0.3), rgba(255,77,90,0.05));
+      margin-top: 4px;
+    }
+    .loop-node:last-child .loop-line { display: none; }
+    .loop-node-content { padding-top: 0.4rem; }
+    .loop-node-title { font-weight: 700; font-size: 0.875rem; color: var(--text-100); margin-bottom: 0.25rem; }
+    .loop-node-body { font-size: 0.8rem; color: var(--text-50); line-height: 1.5; }
+
+    .spartan-stat-block {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      gap: 2rem;
+    }
+    .spartan-mini-stat .num {
+      font-family: var(--mono);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--coral);
+    }
+    .spartan-mini-stat .lbl {
+      font-size: 0.75rem;
+      color: var(--text-50);
+    }
+
+    /* ══════════════════════════════════
+       9. SUCCESS (cream)
+    ══════════════════════════════════ */
+    #success {
+      background: var(--grey-bg);
+      padding: 120px 0;
+      text-align: center;
+    }
+    .success-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .success-inner .label { color: var(--purple); }
+    .success-inner .heading-lg { color: var(--ink); margin-bottom: 1.5rem; }
+    .success-date {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--purple);
+      background: rgba(123,80,200,0.1);
+      border: 1px solid rgba(123,80,200,0.2);
+      padding: 4px 16px;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+    .success-quote {
+      font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 2rem;
+    }
+    .success-quote em { font-style: normal; color: var(--purple); }
+    .success-body { font-size: 1.0625rem; line-height: 1.72; color: var(--mid); margin-bottom: 2.5rem; }
+    .success-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+    .success-metric {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .success-metric .num {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--purple);
+      margin-bottom: 0.25rem;
+    }
+    .success-metric .lbl {
+      font-size: 0.82rem;
+      color: var(--mid);
+    }
+
+    /* ══════════════════════════════════
+       10. CTA (dark)
+    ══════════════════════════════════ */
+    #cta {
+      background: var(--dark-bg);
+      padding: 140px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse, rgba(123,80,200,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .cta-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 1.5rem;
+    }
+    .cta-headline {
+      font-size: clamp(2.5rem, 5vw, 3.75rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      color: var(--text-100);
+      margin-bottom: 1.5rem;
+    }
+    .cta-sub { font-size: 1.0625rem; color: var(--text-70); margin-bottom: 3rem; }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--coral);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 1rem 2.5rem;
+      border-radius: 100px;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 16px 48px rgba(255,77,90,0.4);
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 60px rgba(255,77,90,0.5);
+    }
+    .cta-wordmark {
+      display: block;
+      font-family: var(--logo-font);
+      font-size: 0.9rem;
+      color: var(--text-30);
+      margin-top: 2rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* ══════════════════════════════════
+       SCROLL REVEAL UTILITY
+    ══════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+
+    /* ══════════════════════════════════
+       STICKER
+    ══════════════════════════════════ */
+    .sticker {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border-width: 2px;
+      border-style: solid;
+    }
+    .sticker.teal {
+      background: var(--teal);
+      color: var(--ink);
+      border-color: #009e7f;
+      box-shadow: 3px 3px 0 #009e7f;
+    }
+    .sticker.coral {
+      background: var(--coral);
+      color: #fff;
+      border-color: #c03040;
+      box-shadow: 3px 3px 0 #c03040;
+    }
+
+    /* ══════════════════════════════════
+       MOBILE RESPONSIVE
+    ══════════════════════════════════ */
+    @media (max-width: 768px) {
+      .problem-grid,
+      .whynow-grid,
+      .spartan-inner {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .market-stats { grid-template-columns: 1fr; }
+      .competitor-grid { grid-template-columns: 1fr 1fr; }
+      .roadmap-cols { grid-template-columns: 1fr; }
+      .success-metrics { grid-template-columns: 1fr; }
+      .phases-pin-wrap { flex-direction: column; }
+      .phases-left { width: 100%; }
+      .phases-right { min-height: 480px; }
+    }
+    @media (max-width: 480px) {
+      .competitor-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════
+       1. HERO
+  ════════════════════════════════════════════ -->
+  <section id="hero">
+    <canvas id="gradientCanvas"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <!-- Logo placeholder — SVG wordmark -->
+      <div id="heroLogo" class="hero-logo" style="opacity:0; transform:translateY(12px);">
+        <img src="pynch-wordmark-mocra.svg" alt="Pynch" height="36"
+          onerror="this.outerHTML='<span style=\'font-family:var(--logo-font);font-size:1.75rem;color:#fff;letter-spacing:0.04em;\'>pynch</span>'" />
+      </div>
+      <div class="hero-eyebrow" id="heroEyebrow">Vision 2026 — Neel Bhatt, March 2026</div>
+      <h1 class="hero-headline" id="heroHeadline">
+        Creator ops,<br><em>automated.</em>
+      </h1>
+      <p class="hero-sub" id="heroSub">
+        An honest account of what we're building, why it matters, and where it goes.
+      </p>
+      <button class="hero-cta" id="heroCta" onclick="document.getElementById('problem').scrollIntoView({behavior:'smooth'})">
+        Read the vision ↓
+      </button>
+    </div>
+    <div class="hero-scroll-hint">
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       2. THE PROBLEM
+  ════════════════════════════════════════════ -->
+  <section id="problem">
+    <div class="container">
+      <div class="problem-grid">
+        <div class="problem-text">
+          <div class="label coral reveal">The Problem</div>
+          <h2 class="heading-lg reveal">A people problem disguised as a marketing problem.</h2>
+          <p class="body-lg reveal">
+            You need 100 creators to get 20 good videos. To get 100 creators, you need to send about 2,000 DMs. Then vet them, follow up, send briefs, chase content, review it, pay them, track whether any of it worked. Then do it again next month.
+          </p>
+          <p class="body-lg reveal" style="color: var(--mid);">
+            The entire B2B lead gen industry was built around email addresses and job titles. It doesn't work here. All the Clay workflows, Outreach sequences, intent data platforms — none of it was built for a creator whose professional presence is an Instagram bio and a DM inbox.
+          </p>
+          <div class="problem-quote reveal">
+            <div class="stat-line">// This week at Spartan / DietFit</div>
+            <div style="color: rgba(255,255,255,0.6);">DMs sent ······ <span style="color:#fff;font-weight:700;">112</span></div>
+            <div style="color: rgba(255,255,255,0.6);">Replies ········· <span style="color:#fff;font-weight:700;">8–10</span></div>
+            <div style="color: rgba(255,255,255,0.4); font-size:0.75rem; margin-top:0.75rem;">That's not a bad team. That's a broken process.<br>And it's the industry standard.</div>
+          </div>
+        </div>
+
+        <!-- Funnel Visual -->
+        <div class="funnel-wrap reveal" id="funnelWrap">
+          <div class="funnel-step">
+            <div class="funnel-bar" id="fbar1" style="width: 100%;">
+              <span class="funnel-bar-label">2,000 DMs sent</span>
+              <span class="funnel-bar-num" id="fnum1">2,000</span>
+            </div>
+          </div>
+          <div class="funnel-connector"></div>
+          <div class="funnel-step">
+            <div class="funnel-bar" id="fbar2" style="width: 100%;">
+              <span class="funnel-bar-label">100 creators</span>
+              <span class="funnel-bar-num" id="fnum2">100</span>
+            </div>
+          </div>
+          <div class="funnel-connector"></div>
+          <div class="funnel-step">
+            <div class="funnel-bar" id="fbar3" style="width: 100%;">
+              <span class="funnel-bar-label" style="color: var(--ink);">20 good videos ✓</span>
+              <span class="funnel-bar-num" id="fnum3" style="color: var(--teal);">20</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 2.5rem; text-align: center;">
+            <span class="sticker coral" style="transform: rotate(-2deg); display: inline-flex;">⚠ Broken process</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       3. THE MARKET
+  ════════════════════════════════════════════ -->
+  <section id="market">
+    <div class="container">
+      <div class="market-header">
+        <div class="label teal reveal">The Market</div>
+        <h2 class="heading-lg reveal">The demand is there. The tooling is broken.</h2>
+        <p class="body-lg reveal">The creator economy is enormous and still growing. The tooling for mid-market brands is a decade behind.</p>
+      </div>
+
+      <div class="market-stats">
+        <div class="stat-card reveal">
+          <div class="stat-number"><span class="accent" id="cnt-205">$0</span>B</div>
+          <div class="stat-label">Creator economy today (2024)</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-number"><span class="accent" id="cnt-528">$0</span>B</div>
+          <div class="stat-label">Projected by 2030 (22.5% CAGR)</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-number"><span class="accent" id="cnt-161">0</span>%</div>
+          <div class="stat-label">UGC conversion lift vs no UGC</div>
+        </div>
+      </div>
+
+      <!-- Competitor cards -->
+      <div style="margin-bottom: 1.5rem;">
+        <span class="label" style="color:var(--text-50);">The competitive landscape</span>
+      </div>
+      <div class="competitor-grid">
+        <div class="comp-card reveal">
+          <div class="comp-name">Aspire.io</div>
+          <div class="comp-price">$2K+/mo</div>
+          <div class="comp-desc">Annual contracts, demo-gated. Built for brands with dedicated influencer teams.</div>
+        </div>
+        <div class="comp-card reveal">
+          <div class="comp-name">GRIN</div>
+          <div class="comp-price">$2.5K+/mo</div>
+          <div class="comp-desc">Deep Shopify integration. Enterprise DTC focus. Annual contracts historically.</div>
+        </div>
+        <div class="comp-card reveal">
+          <div class="comp-name">Modash</div>
+          <div class="comp-price">Discovery only</div>
+          <div class="comp-desc">Gives you a list. You're still manually doing everything after that.</div>
+        </div>
+        <div class="comp-card pynch-card reveal">
+          <div class="pynch-badge">Gap in market</div>
+          <div class="comp-name">Nobody</div>
+          <div class="comp-price" style="color: var(--teal);">Pynch fills this</div>
+          <div class="comp-desc">Proactive outbound scouting + automated ops + farm-scale management at a price small teams can use.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       4. WHAT PYNCH IS — 3 phases
+  ════════════════════════════════════════════ -->
+  <section id="phases" style="padding: 0;">
+    <div class="container" style="padding-top: 120px; padding-bottom: 120px;">
+      <!-- Static layout (JS upgrades to sticky) -->
+      <div id="phasesPinWrap" class="phases-pin-wrap" style="min-height: 600px; align-items: flex-start; padding-top: 2rem;">
+        <div class="phases-left" style="position: sticky; top: 100px;">
+          <div class="label purple">What Pynch Is</div>
+          <h2 class="heading-lg">Three phases.<br>One direction.</h2>
+          <p class="body-lg" style="color: var(--mid); margin-top: 1rem;">From automated ops tool to the infrastructure layer of the creator economy.</p>
+          <div class="phases-progress">
+            <div class="phase-indicator active" data-phase="0" onclick="setPhase(0)">
+              <div class="phase-dot"></div>
+              <span class="phase-indicator-label">Today — Farm Mode</span>
+            </div>
+            <div class="phase-indicator" data-phase="1" onclick="setPhase(1)">
+              <div class="phase-dot"></div>
+              <span class="phase-indicator-label">Near-term — Best platform</span>
+            </div>
+            <div class="phase-indicator" data-phase="2" onclick="setPhase(2)">
+              <div class="phase-dot"></div>
+              <span class="phase-indicator-label">Long-term — Network asset</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="phases-right" style="padding-top: 0.5rem;">
+          <!-- Phase 0 -->
+          <div class="phase-panel active" id="panel-0" style="position: relative; margin-bottom: 1.5rem; opacity: 1; transform: none; pointer-events: auto;">
+            <div class="phase-card" style="--phase-color: var(--purple);">
+              <div>
+                <div class="phase-tag">Today</div>
+                <h3 class="heading-md">Brand-side operations. Farm Mode.</h3>
+                <p class="body-md" style="color: var(--text-70); margin-top: 0.75rem;">
+                  Pynch is an agent-powered creator operations tool. It automates the full creator pipeline — sourcing, outreach, onboarding, briefing, content collection, payment, performance tracking.
+                </p>
+                <div class="phase-features">
+                  <div class="phase-feat">Build a stable of 100+ micro creators at $50/video vs $500</div>
+                  <div class="phase-feat">The system finds, contacts, onboards, and tracks output</div>
+                  <div class="phase-feat">You end up with a proprietary creator asset nobody else has</div>
+                  <div class="phase-feat">Campaign Mode built on a working Farm</div>
+                </div>
+              </div>
+              <div class="phase-number">01</div>
+            </div>
+          </div>
+
+          <!-- Phase 1 -->
+          <div class="phase-panel" id="panel-1" style="position: relative; margin-bottom: 1.5rem; opacity: 0.4; transform: none; pointer-events: auto; transition: opacity 0.4s;">
+            <div class="phase-card" style="--phase-color: var(--teal);">
+              <div>
+                <div class="phase-tag" style="color: var(--teal); background: rgba(0,212,170,0.12); border-color: rgba(0,212,170,0.25);">Near-term</div>
+                <h3 class="heading-md">The best creator farming platform in the world.</h3>
+                <p class="body-md" style="color: var(--text-70); margin-top: 0.75rem;">
+                  Genuinely excellent at this before expanding to anything else. If we can get a brand to 100 creators producing reliably at $50/video — consistently, without drama — that's a product worth paying for.
+                </p>
+                <div class="phase-features" style="--phase-color: var(--teal);">
+                  <div class="phase-feat" style="--phase-color: var(--teal);">Crack lead gen, brief quality, content review, payments, tracking</div>
+                  <div class="phase-feat" style="--phase-color: var(--teal);">AI pre-screening at scale — nobody's solved this for this market</div>
+                  <div class="phase-feat" style="--phase-color: var(--teal);">The bar: does it reliably work, not feature completeness</div>
+                </div>
+              </div>
+              <div class="phase-number">02</div>
+            </div>
+          </div>
+
+          <!-- Phase 2 -->
+          <div class="phase-panel" id="panel-2" style="position: relative; opacity: 0.4; transform: none; pointer-events: auto; transition: opacity 0.4s;">
+            <div class="phase-card" style="--phase-color: var(--blue);">
+              <div>
+                <div class="phase-tag" style="color: var(--blue); background: rgba(62,137,255,0.12); border-color: rgba(62,137,255,0.25);">Long-term</div>
+                <h3 class="heading-md">The network becomes the asset. The ZipRecruiter model.</h3>
+                <p class="body-md" style="color: var(--text-70); margin-top: 0.75rem;">
+                  Employers post jobs → builds candidate pool → candidate pool becomes the product. Brands run creator ops through Pynch → collectively build the creator network → network makes Pynch more valuable to every other brand.
+                </p>
+                <div class="phase-features" style="--phase-color: var(--blue);">
+                  <div class="phase-feat" style="--phase-color: var(--blue);">Network distributable through campaigns, creator tools, new products</div>
+                  <div class="phase-feat" style="--phase-color: var(--blue);">Creators benefit from a system that pays reliably, gives good briefs</div>
+                  <div class="phase-feat" style="--phase-color: var(--blue);">We don't announce this. We just build the thing that makes it happen.</div>
+                </div>
+              </div>
+              <div class="phase-number">03</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       5. WHAT'S LIVE
+  ════════════════════════════════════════════ -->
+  <section id="roadmap">
+    <div class="container">
+      <div class="roadmap-header">
+        <div class="label amber reveal">What's Live, What's Next</div>
+        <h2 class="heading-lg reveal">Sequenced deliberately.<br>Outreach first. Everything else follows.</h2>
+      </div>
+      <div class="roadmap-cols">
+        <div class="roadmap-col col-built reveal">
+          <div class="roadmap-col-header">
+            <div class="roadmap-col-icon">✓</div>
+            <div>
+              <div class="roadmap-col-title">Built &amp; testing</div>
+              <div class="roadmap-col-subtitle">Working now</div>
+            </div>
+          </div>
+          <div class="roadmap-items">
+            <div class="roadmap-item"><div class="roadmap-dot"></div>Creator discovery &amp; list building (automated search + filtering)</div>
+            <div class="roadmap-item"><div class="roadmap-dot"></div>Automated DM outreach with reply tracking and follow-up sequences</div>
+            <div class="roadmap-item"><div class="roadmap-dot"></div>Per-brand creator recruitment landing pages (brand.pynchhq.com)</div>
+          </div>
+        </div>
+        <div class="roadmap-col col-building reveal">
+          <div class="roadmap-col-header">
+            <div class="roadmap-col-icon">→</div>
+            <div>
+              <div class="roadmap-col-title">Building next</div>
+              <div class="roadmap-col-subtitle">In progress</div>
+            </div>
+          </div>
+          <div class="roadmap-items">
+            <div class="roadmap-item"><div class="roadmap-dot"></div>Brief creation and content collection</div>
+            <div class="roadmap-item"><div class="roadmap-dot"></div>Mass payment operations</div>
+            <div class="roadmap-item"><div class="roadmap-dot"></div>Performance tracking per creator (views, engagement, ROAS)</div>
+          </div>
+        </div>
+        <div class="roadmap-col col-after reveal">
+          <div class="roadmap-col-header">
+            <div class="roadmap-col-icon">◦</div>
+            <div>
+              <div class="roadmap-col-title">After that</div>
+              <div class="roadmap-col-subtitle">Horizon</div>
+            </div>
+          </div>
+          <div class="roadmap-items">
+            <div class="roadmap-item"><div class="roadmap-dot"></div>Creator coaching and training flows</div>
+            <div class="roadmap-item"><div class="roadmap-dot"></div>Full campaign mode</div>
+            <div class="roadmap-item"><div class="roadmap-dot"></div>AI-assisted content QA at scale</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       6. THE SEARCH SIGNAL
+  ════════════════════════════════════════════ -->
+  <section id="signal">
+    <div class="container">
+      <div class="signal-inner">
+        <div class="label" style="color: var(--blue);">The Search Signal</div>
+        <h2 class="heading-lg reveal" style="color: var(--text-100);">The market is already there.<br>It's just not being served.</h2>
+        <p class="body-lg reveal" style="color: var(--text-70);">People actively searching for things like these aren't casually browsing. They're trying to figure out how to do this with spreadsheets at 11pm on a Tuesday.</p>
+        <div class="terminal-wrap reveal" id="terminalWrap">
+          <div class="terminal-bar">
+            <div class="term-dot"></div>
+            <div class="term-dot"></div>
+            <div class="term-dot"></div>
+            <div class="terminal-title">search_queries.log</div>
+          </div>
+          <div class="terminal-body" id="terminalBody">
+            <div><span class="term-prompt">$ </span><span class="term-query"></span><span class="typewriter-cursor" id="twCursor"></span></div>
+            <div id="termLines"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       7. WHY NOW
+  ════════════════════════════════════════════ -->
+  <section id="whynow">
+    <div class="container">
+      <div class="whynow-grid">
+        <div class="whynow-text">
+          <div class="label purple reveal">Why Now</div>
+          <h2 class="heading-lg reveal">The contrarian view:<br>AI makes real content more valuable.</h2>
+          <p class="body-lg reveal" style="color: var(--mid);">
+            Platforms are being flooded with AI-generated videos. AI avatars. Synthetic creators. Audiences are already developing a radar for it — and they reject it.
+          </p>
+          <p class="body-lg reveal" style="color: var(--mid);">
+            Brands that figured out how to work with real humans at scale will have a meaningful advantage. Pynch's position: use AI to handle all the operational overhead so brands can afford to work with more real people.
+          </p>
+          <div class="reveal" style="margin-top: 1.5rem;">
+            <span class="sticker teal" style="transform: rotate(1deg);">AI runs the ops. Humans make the content.</span>
+          </div>
+        </div>
+        <div class="whynow-visual">
+          <div class="whynow-card reveal">
+            <div class="whynow-icon">🤖</div>
+            <div>
+              <div class="whynow-card-title">AI floods the feed</div>
+              <div class="whynow-card-body">Synthetic creators, AI avatars, generated videos. Audiences develop a radar for it. Regulation is catching up.</div>
+            </div>
+          </div>
+          <div class="whynow-card reveal">
+            <div class="whynow-icon">📱</div>
+            <div>
+              <div class="whynow-card-title">Human content becomes scarce</div>
+              <div class="whynow-card-body">Real people, real results. Nano-influencers average 6.23% engagement — 2.3× higher than macro creators.</div>
+            </div>
+          </div>
+          <div class="whynow-card reveal">
+            <div class="whynow-icon">⚡</div>
+            <div>
+              <div class="whynow-card-title">New York already moved</div>
+              <div class="whynow-card-body">NY law requires AI performer disclosure in paid ads, effective June 2026. More states and countries will follow.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       8. SPARTAN ADVANTAGE
+  ════════════════════════════════════════════ -->
+  <section id="spartan">
+    <div class="container">
+      <div class="spartan-inner">
+        <div class="spartan-text">
+          <div class="label coral reveal">The Spartan Advantage</div>
+          <h2 class="heading-lg reveal" style="color: var(--text-100);">Not a demo environment.<br>A real feedback loop.</h2>
+          <p class="body-lg reveal" style="color: var(--text-70);">
+            This isn't a theoretical problem. Spartan runs DietFit. The creator pipeline for DietFit is genuinely painful — real hours, real people, real manual work.
+          </p>
+          <p class="body-lg reveal" style="color: var(--text-70); margin-top: 1rem;">
+            Being the first customer who depends on your own product is the most useful thing a founding team can be. Bad ideas fail fast. Good ones prove themselves with real stakes.
+          </p>
+        </div>
+
+        <div class="spartan-loop reveal">
+          <div class="loop-title">/ DietFit creator pipeline — real state /</div>
+          <div class="loop-nodes">
+            <div class="loop-node">
+              <div class="loop-node-left">
+                <div class="loop-circle">📲</div>
+                <div class="loop-line"></div>
+              </div>
+              <div class="loop-node-content">
+                <div class="loop-node-title">112 DMs sent this week</div>
+                <div class="loop-node-body">By a human sitting at a desk. Platform throttle limits everything else.</div>
+              </div>
+            </div>
+            <div class="loop-node">
+              <div class="loop-node-left">
+                <div class="loop-circle">💬</div>
+                <div class="loop-line"></div>
+              </div>
+              <div class="loop-node-content">
+                <div class="loop-node-title">8–10 replies</div>
+                <div class="loop-node-body">Not a bad team. That's what the industry standard looks like.</div>
+              </div>
+            </div>
+            <div class="loop-node">
+              <div class="loop-node-left">
+                <div class="loop-circle">🔁</div>
+                <div class="loop-line"></div>
+              </div>
+              <div class="loop-node-content">
+                <div class="loop-node-title">Do it again next month</div>
+                <div class="loop-node-body">Vet, follow up, send briefs, chase content, review, pay, track. Repeat.</div>
+              </div>
+            </div>
+            <div class="loop-node">
+              <div class="loop-node-left">
+                <div class="loop-circle">✓</div>
+              </div>
+              <div class="loop-node-content">
+                <div class="loop-node-title">Pynch changes this</div>
+                <div class="loop-node-body">We feel this problem every single week. Every test has real stakes. That's worth more than a clean demo.</div>
+              </div>
+            </div>
+          </div>
+          <div class="spartan-stat-block">
+            <div class="spartan-mini-stat">
+              <div class="num">~8%</div>
+              <div class="lbl">reply rate (industry avg)</div>
+            </div>
+            <div class="spartan-mini-stat">
+              <div class="num">Real</div>
+              <div class="lbl">feedback loop</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       9. WHAT SUCCESS LOOKS LIKE
+  ════════════════════════════════════════════ -->
+  <section id="success">
+    <div class="container">
+      <div class="success-inner">
+        <div class="label purple reveal">What Success Looks Like</div>
+        <div class="success-date reveal">September 2026</div>
+        <div class="success-quote reveal">
+          "<em>We use it and we depend on it.</em>"
+        </div>
+        <p class="success-body reveal">
+          Not fifty paying customers. Not a funding round. Not month-over-month growth charts. A small number of customers who would be angry if it went away. Who tell other people because it solved something real.
+        </p>
+        <p class="success-body reveal" style="font-style: italic; font-size: 1rem;">
+          The goal isn't feature completeness. It's building something indispensable.
+        </p>
+        <div class="success-metrics">
+          <div class="success-metric reveal">
+            <div class="num">100+</div>
+            <div class="lbl">Creators in pipeline per brand</div>
+          </div>
+          <div class="success-metric reveal">
+            <div class="num">$50</div>
+            <div class="lbl">Per video vs $500 traditional</div>
+          </div>
+          <div class="success-metric reveal">
+            <div class="num">0</div>
+            <div class="lbl">Hours of manual ops per week</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════
+       10. CTA
+  ════════════════════════════════════════════ -->
+  <section id="cta">
+    <div class="cta-glow"></div>
+    <div class="container">
+      <div class="cta-inner">
+        <div class="cta-eyebrow reveal">Pynch. Creator ops, automated.</div>
+        <h2 class="cta-headline reveal">The tooling<br>finally catches up.</h2>
+        <p class="cta-sub reveal">Real feedback loop. Real stakes. Building something indispensable.</p>
+        <a href="https://pynchhq.com" target="_blank" class="cta-btn reveal">
+          Visit pynchhq.com →
+        </a>
+        <span class="cta-wordmark reveal">pynch · march 2026</span>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    /* ═══════════════════════════════════
+       WEBGL SHADER (from 08-complete-v16)
+    ═══════════════════════════════════ */
+    (function initWebGL() {
+      const glCanvas = document.getElementById('gradientCanvas');
+      const gl = glCanvas ? glCanvas.getContext('webgl2') : null;
+      if (!gl) { if (glCanvas) glCanvas.style.display = 'none'; return; }
+
+      const vertSrc = `#version 300 es
+in vec3 position;
+out vec2 vPosition;
+void main() {
+  gl_Position = vec4(position, 1.);
+  vPosition = position.xy;
+}`;
+      const fragSrc = `#version 300 es
+precision highp float;
+uniform vec3 color1;uniform vec3 color2;uniform vec3 color3;uniform vec3 color4;
+uniform float colorSize;uniform float colorSpacing;uniform float colorRotation;uniform float colorSpread;
+uniform float displacement;uniform float zoom;uniform float spacing;uniform float seed;
+uniform vec2 viewportSize;uniform vec2 colorOffset;uniform vec2 transformPosition;
+uniform float noiseSize;uniform float noiseIntensity;
+in vec2 vPosition;
+out vec4 fragColor;
+vec3 gdnHash(vec3 p){p=fract(p*vec3(.1031,.1030,.0973));p+=dot(p,p.yxz+33.33);return fract((p.xxy+p.yxx)*p.zyx);}
+vec4 gdn3D(in vec3 x){
+  vec3 p=floor(x),w=fract(x);
+  vec3 u=w*w*w*(w*(w*6.-15.)+10.),du=30.*w*w*(w*(w-2.)+1.);
+  vec3 ga=gdnHash(p+vec3(0,0,0)),gb=gdnHash(p+vec3(1,0,0)),gc=gdnHash(p+vec3(0,1,0)),gd=gdnHash(p+vec3(1,1,0)),ge=gdnHash(p+vec3(0,0,1)),gf=gdnHash(p+vec3(1,0,1)),gg=gdnHash(p+vec3(0,1,1)),gh=gdnHash(p+vec3(1,1,1));
+  float va=dot(ga,w-vec3(0,0,0)),vb=dot(gb,w-vec3(1,0,0)),vc=dot(gc,w-vec3(0,1,0)),vd=dot(gd,w-vec3(1,1,0)),ve=dot(ge,w-vec3(0,0,1)),vf=dot(gf,w-vec3(1,0,1)),vg=dot(gg,w-vec3(0,1,1)),vh=dot(gh,w-vec3(1,1,1));
+  return vec4(
+    va+u.x*(vb-va)+u.y*(vc-va)+u.z*(ve-va)+u.x*u.y*(va-vb-vc+vd)+u.y*u.z*(va-vc-ve+vg)+u.z*u.x*(va-vb-ve+vf)+(-va+vb+vc-vd+ve-vf-vg+vh)*u.x*u.y*u.z,
+    ga+u.x*(gb-ga)+u.y*(gc-ga)+u.z*(ge-ga)+u.x*u.y*(ga-gb-gc+gd)+u.y*u.z*(ga-gc-ge+gg)+u.z*u.x*(ga-gb-ge+gf)+(-ga+gb+gc-gd+ge-gf-gg+gh)*u.x*u.y*u.z
+    +du*(vec3(vb,vc,ve)-va+u.yzx*vec3(va-vb-vc+vd,va-vc-ve+vg,va-vb-ve+vf)+u.zxy*vec3(va-vb-ve+vf,va-vb-vc+vd,va-vc-ve+vg)+u.yzx*u.zxy*(-va+vb+vc-vd+ve-vf-vg+vh))
+  );
+}
+float hg(vec2 p){p=50.*fract(p*.3183099+vec2(.71,.113));return -1.+2.*fract(p.x*p.y*(p.x+p.y));}
+float cNoise(in vec2 p){vec2 i=floor(p),f=fract(p),u=f*f*(3.-2.*f);return mix(mix(hg(i),hg(i+vec2(1,0)),u.x),mix(hg(i+vec2(0,1)),hg(i+vec2(1,1)),u.x),u.y);}
+vec2 rot2D(vec2 v,float a){float s=sin(a),c=cos(a);return mat2(c,-s,s,c)*v;}
+void main(){
+  vec2 pos=vPosition;
+  pos.x*=min(1.,viewportSize.x/viewportSize.y);
+  pos.y*=min(1.,viewportSize.y/viewportSize.x);
+  pos/=zoom;pos+=transformPosition;
+  vec2 nlp=pos*.5+.5;
+  vec3 dn=gdn3D(vec3(nlp,seed)).xyz;
+  float grain=cNoise(vPosition*viewportSize/noiseSize);
+  pos+=dn.xz*displacement;
+  vec2 op=pos;op-=colorOffset;
+  op=mod(op-spacing,vec2(spacing*2.))-spacing;
+  op=rot2D(op,-colorRotation);op/=vec2(max(colorSize,.001));op*=vec2(1./colorSpread,1.);
+  vec3 color=vec3(0.02,0.02,0.06);
+  color=mix(color1,color,smoothstep(0.,1.,distance(op,vec2(0.,colorSpacing*1.5))));
+  color=mix(color2,color,smoothstep(0.,1.,distance(op,vec2(0.,colorSpacing*0.5))));
+  color=mix(color3,color,smoothstep(0.,1.,distance(op,vec2(0.,-colorSpacing*0.5))));
+  color=mix(color4,color,smoothstep(0.,1.,distance(op,vec2(0.,-colorSpacing*1.5))));
+  color+=grain*noiseIntensity;color=clamp(color,0.,1.);
+  fragColor=vec4(color,1.);
+}`;
+
+      function compileSh(g, type, src) {
+        const s = g.createShader(type); g.shaderSource(s, src); g.compileShader(s);
+        if (!g.getShaderParameter(s, g.COMPILE_STATUS)) { console.error('Shader:', g.getShaderInfoLog(s)); return null; }
+        return s;
+      }
+      const vs = compileSh(gl, gl.VERTEX_SHADER, vertSrc);
+      const fs = compileSh(gl, gl.FRAGMENT_SHADER, fragSrc);
+      if (!vs || !fs) return;
+      const prog = gl.createProgram();
+      gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog); gl.useProgram(prog);
+      const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+      const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,1,-1,0,1,1,0,-1,-1,0,1,1,0,-1,1,0]), gl.STATIC_DRAW);
+      const posLoc = gl.getAttribLocation(prog, 'position');
+      gl.enableVertexAttribArray(posLoc); gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+      gl.bindVertexArray(null);
+      const U = {};
+      ['color1','color2','color3','color4','colorSize','colorSpacing','colorRotation','colorSpread','displacement','zoom','spacing','seed','viewportSize','colorOffset','transformPosition','noiseSize','noiseIntensity']
+        .forEach(n => U[n] = gl.getUniformLocation(prog, n));
+      function hex3(h){return[parseInt(h.slice(1,3),16)/255,parseInt(h.slice(3,5),16)/255,parseInt(h.slice(5,7),16)/255];}
+      const state = {
+        color1:hex3('#7B50C8'),color2:hex3('#00D4AA'),color3:hex3('#9B70E8'),color4:hex3('#FF5A45'),
+        colorSize:1.0,colorSpacing:0.60,colorRotation:-0.38,colorSpread:5.40,
+        displacement:4.20,zoom:0.72,spacing:4.27,seed:Math.random()*100-50,
+        noiseSize:0.5,noiseIntensity:0.028,
+        colorOffset:[-0.7741,-0.2064],transformPosition:[-0.28,-0.44],
+      };
+      let mx=0.5,my=0.5,tx=0.5,ty=0.5;
+      const BTX=-0.28,BTY=-0.44,MSX=1.20,MSY=0.90;
+      document.addEventListener('mousemove', e=>{tx=e.clientX/innerWidth;ty=e.clientY/innerHeight;});
+      document.addEventListener('touchmove', e=>{if(e.touches[0]){tx=e.touches[0].clientX/innerWidth;ty=e.touches[0].clientY/innerHeight;}},{passive:true});
+      function resize(){
+        glCanvas.width=innerWidth*(devicePixelRatio||1);glCanvas.height=innerHeight*(devicePixelRatio||1);
+        glCanvas.style.width=innerWidth+'px';glCanvas.style.height=innerHeight+'px';
+        gl.viewport(0,0,glCanvas.width,glCanvas.height);
+      }
+      window.addEventListener('resize',resize,{passive:true}); resize();
+      function draw(){
+        gl.useProgram(prog);gl.bindVertexArray(vao);
+        gl.uniform3fv(U.color1,state.color1);gl.uniform3fv(U.color2,state.color2);
+        gl.uniform3fv(U.color3,state.color3);gl.uniform3fv(U.color4,state.color4);
+        gl.uniform1f(U.colorSize,Math.max(state.colorSize,.001));gl.uniform1f(U.colorSpacing,state.colorSpacing);
+        gl.uniform1f(U.colorRotation,state.colorRotation);gl.uniform1f(U.colorSpread,state.colorSpread);
+        gl.uniform1f(U.displacement,state.displacement);gl.uniform1f(U.zoom,state.zoom);
+        gl.uniform1f(U.spacing,state.spacing);gl.uniform1f(U.seed,state.seed);
+        gl.uniform2fv(U.viewportSize,[innerWidth,innerHeight]);gl.uniform2fv(U.colorOffset,state.colorOffset);
+        gl.uniform2fv(U.transformPosition,state.transformPosition);
+        gl.uniform1f(U.noiseSize,state.noiseSize);gl.uniform1f(U.noiseIntensity,state.noiseIntensity);
+        gl.drawArrays(gl.TRIANGLES,0,6);gl.bindVertexArray(null);
+      }
+      function loop(){
+        mx+=(tx-mx)*.08;my+=(ty-my)*.08;
+        state.transformPosition=[BTX+(mx-.5)*MSX,BTY+(my-.5)*MSY];
+        state.seed+=.00045;draw();requestAnimationFrame(loop);
+      }
+      loop();
+    })();
+
+    /* ═══════════════════════════════════
+       HERO ENTRANCE ANIMATION
+    ═══════════════════════════════════ */
+    window.addEventListener('DOMContentLoaded', () => {
+      const tl = gsap.timeline({ delay: 0.2 });
+      tl.to('#heroLogo',     { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' })
+        .to('#heroEyebrow',  { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4')
+        .to('#heroHeadline', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3')
+        .to('#heroSub',      { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4')
+        .to('#heroCta',      { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, '-=0.3');
+    });
+
+    /* ═══════════════════════════════════
+       SCROLL REVEAL
+    ═══════════════════════════════════ */
+    gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      gsap.to(el, {
+        opacity: 1,
+        y: 0,
+        duration: 0.75,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+          once: true,
+        },
+        delay: (el.closest('.problem-grid, .whynow-grid, .spartan-inner, .market-stats, .competitor-grid, .roadmap-cols, .success-metrics, .whynow-visual') ? 
+          Array.from(el.parentElement.children).indexOf(el) * 0.08 : 0)
+      });
+    });
+
+    /* ═══════════════════════════════════
+       FUNNEL ANIMATION
+    ═══════════════════════════════════ */
+    (function(){
+      const bars = [
+        { bar: '#fbar1', width: 100, num: '#fnum1', val: 2000, label: '2,000 DMs' },
+        { bar: '#fbar2', width: 50,  num: '#fnum2', val: 100,  label: '100 creators' },
+        { bar: '#fbar3', width: 22,  num: '#fnum3', val: 20,   label: '20 good videos' },
+      ];
+      // Set initial widths
+      bars.forEach(b => { document.querySelector(b.bar).style.width = b.width + '%'; });
+
+      ScrollTrigger.create({
+        trigger: '#funnelWrap',
+        start: 'top 70%',
+        once: true,
+        onEnter: () => {
+          bars.forEach((b, i) => {
+            setTimeout(() => {
+              // Animate bar width
+              gsap.from(b.bar, { width: '100%', duration: 1.2, ease: 'power3.inOut' });
+            }, i * 200);
+          });
+        }
+      });
+    })();
+
+    /* ═══════════════════════════════════
+       COUNTER ANIMATIONS
+    ═══════════════════════════════════ */
+    function animateCounter(el, from, to, decimals, prefix, suffix) {
+      const obj = { val: from };
+      gsap.to(obj, {
+        val: to,
+        duration: 2,
+        ease: 'power2.out',
+        onUpdate: () => {
+          el.textContent = prefix + (decimals ? obj.val.toFixed(decimals) : Math.round(obj.val));
+        },
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 80%',
+          once: true,
+        }
+      });
+    }
+    animateCounter(document.getElementById('cnt-205'), 0, 205, 0, '$');
+    animateCounter(document.getElementById('cnt-528'), 0, 528, 0, '$');
+    animateCounter(document.getElementById('cnt-161'), 0, 161, 0, '');
+
+    /* ═══════════════════════════════════
+       PHASES — clickable panels
+    ═══════════════════════════════════ */
+    window.setPhase = function(idx) {
+      document.querySelectorAll('.phase-indicator').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+      document.querySelectorAll('.phase-panel').forEach((el, i) => {
+        el.style.opacity = i === idx ? '1' : '0.35';
+        el.style.transform = 'none';
+      });
+    };
+
+    // Auto-advance phases on scroll
+    (function(){
+      const panels = [0, 1, 2];
+      panels.forEach(idx => {
+        ScrollTrigger.create({
+          trigger: `#panel-${idx}`,
+          start: 'top 55%',
+          onEnter: () => { if (idx > 0) setPhase(idx); },
+          onLeaveBack: () => { if (idx > 0) setPhase(idx - 1); },
+        });
+      });
+    })();
+
+    /* ═══════════════════════════════════
+       TYPEWRITER — SEARCH SIGNAL
+    ═══════════════════════════════════ */
+    (function(){
+      const queries = [
+        { text: 'how to manage creator payments at scale', tag: 'high' },
+        { text: 'how to scale ugc campaign with 50+ creators', tag: 'high' },
+        { text: 'influencer outreach automation', tag: 'high' },
+        { text: 'ugc platform affordable', tag: 'med' },
+        { text: 'influencer crm software small team', tag: 'med' },
+        { text: 'grin alternatives cheaper', tag: 'high' },
+        { text: 'ugc tools for brands', tag: 'med' },
+        { text: 'creator management spreadsheet alternative', tag: 'low' },
+      ];
+      const tagLabels = { high: 'high intent', med: 'intent', low: 'awareness' };
+      let started = false;
+
+      ScrollTrigger.create({
+        trigger: '#terminalWrap',
+        start: 'top 75%',
+        once: true,
+        onEnter: () => {
+          if (started) return;
+          started = true;
+          runTypewriter();
+        }
+      });
+
+      function runTypewriter() {
+        const promptEl = document.querySelector('#terminalBody .term-query');
+        const linesEl = document.getElementById('termLines');
+        let qi = 0;
+
+        function nextQuery() {
+          if (qi >= queries.length) {
+            // Loop
+            qi = 0;
+            linesEl.innerHTML = '';
+          }
+          const q = queries[qi++];
+          let ci = 0;
+          promptEl.textContent = '';
+
+          function typeChar() {
+            if (ci < q.text.length) {
+              promptEl.textContent += q.text[ci++];
+              setTimeout(typeChar, 38 + Math.random() * 30);
+            } else {
+              // Done typing — add to log
+              setTimeout(() => {
+                const line = document.createElement('div');
+                line.innerHTML = `<span class="term-prompt">✓ </span><span class="term-query">${q.text}</span><span class="term-tag ${q.tag}">${tagLabels[q.tag]}</span>`;
+                linesEl.appendChild(line);
+                gsap.from(line, { opacity: 0, y: 8, duration: 0.3 });
+                promptEl.textContent = '';
+                setTimeout(nextQuery, 600);
+              }, 300);
+            }
+          }
+          typeChar();
+        }
+        nextQuery();
+      }
+    })();
+
+    /* ═══════════════════════════════════
+       STAGGER children in grids
+    ═══════════════════════════════════ */
+    ['.market-stats', '.competitor-grid', '.roadmap-cols', '.success-metrics', '.whynow-visual'].forEach(sel => {
+      const els = document.querySelectorAll(sel + ' > *');
+      els.forEach((el, i) => {
+        gsap.to(el, {
+          opacity: 1, y: 0, duration: 0.65, ease: 'power3.out',
+          delay: i * 0.1,
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+        });
+      });
+    });
+
+  </script>
+</body>
+</html>
